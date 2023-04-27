@@ -37,6 +37,7 @@ public class Main {
         ProductService ps2 = new ProductService(productRepository1);
         ps2.create(p3);
         ps2.create(p5);
+        System.out.println(productRepository1.getProducts());
         System.out.println(ps.search("oU"));
     }
 }

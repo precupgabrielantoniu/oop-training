@@ -3,6 +3,7 @@
 
 # IntelliJ generated files
 *.iml
+*.xml
 
 # Log file
 *.log
