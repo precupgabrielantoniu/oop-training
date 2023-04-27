@@ -1,2 +1,2 @@
 # oop-training
-Training classes
+OOP training classes
