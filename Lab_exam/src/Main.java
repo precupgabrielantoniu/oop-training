@@ -39,5 +39,7 @@ public class Main {
         ps2.create(p5);
         System.out.println(productRepository1.getProducts());
         System.out.println(ps.search("oU"));
+        System.out.println("Hello World!");
+        System.out.println("Print #2");
     }
 }
