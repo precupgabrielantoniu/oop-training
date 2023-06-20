@@ -10,4 +10,5 @@ public interface UserService {
     Iterable<DisplayUserDTO> findAllUsers();
     DisplayUserDTO deleteUser(Integer id) throws NoUserWithIdException;
     DisplayUserDTO getUserById(Integer id) throws Exception;
+    CreateUserDTO updateUser(Integer id, CreateUserDTO newCreateUserDTO) throws Exception;
 }

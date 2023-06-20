@@ -43,8 +43,20 @@ public class UserServiceImpl implements UserService {
     @Override
     public DisplayUserDTO getUserById(Integer id) throws Exception {
         Optional<User> foundOptionalUser = userRepository.findById(id);
-        User foundUser = foundOptionalUser.orElseThrow(() -> new Exception("No user found with this id."));
+        User foundUser = foundOptionalUser.orElseThrow(() -> new NoUserWithIdException("No user found with this id."));
         return DisplayUserDTO.fromEntity(foundUser);
+    }
+
+    @Override
+    public CreateUserDTO updateUser(Integer id, CreateUserDTO newCreateUsedDTO) throws Exception {
+        //Check notNull annotation from Spring/lombok
+        Optional<User> foundOptionalUser = userRepository.findById(id);
+        User foundUser = foundOptionalUser.orElseThrow(() -> new NoUserWithIdException("No user found with this id."));
+        foundUser.setName(newCreateUsedDTO.getName());
+        foundUser.setEmail(newCreateUsedDTO.getEmail());
+        foundUser.setPassword(newCreateUsedDTO.getPassword());
+        User updatedUser = userRepository.save(foundUser);
+        return CreateUserDTO.fromEntity(updatedUser);
     }
 
 

@@ -80,4 +80,14 @@ public class UserController {
     public @ResponseBody DisplayUserDTO deleteUser(@PathVariable("id") Integer id) throws NoUserWithIdException {
         return userService.deleteUser(id);
     }
+
+    @PutMapping(path="/user/{id}")
+    public @ResponseBody DisplayUserDTO updateUser(@PathVariable("id") Integer id, @RequestBody CreateUserDTO createUserDTO) {
+        try {
+            CreateUserDTO createNewUserDTO = userService.updateUser(id, createUserDTO);
+            return DisplayUserDTO.fromCreatedUserDTO(createNewUserDTO);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage(), e);
+        }
+    }
 }
