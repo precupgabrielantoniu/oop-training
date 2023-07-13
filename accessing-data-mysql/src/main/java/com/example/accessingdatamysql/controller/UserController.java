@@ -5,6 +5,9 @@ import com.example.accessingdatamysql.dto.DisplayUserDTO;
 import com.example.accessingdatamysql.entity.User;
 import com.example.accessingdatamysql.errorhandling.NoUserWithIdException;
 import com.example.accessingdatamysql.service.UserService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.github.fge.jsonpatch.JsonPatch;
+import com.github.fge.jsonpatch.JsonPatchException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -87,6 +90,17 @@ public class UserController {
             CreateUserDTO createNewUserDTO = userService.updateUser(id, createUserDTO);
             return DisplayUserDTO.fromCreatedUserDTO(createNewUserDTO);
         } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage(), e);
+        }
+    }
+
+    @PatchMapping(path="/user/patch/{id}", consumes = "application/json-patch+json") // partial update
+    public @ResponseBody DisplayUserDTO patchUser(@PathVariable("id") Integer id, @RequestBody JsonPatch jsonPatch) {
+        try {
+            return userService.patchUser(id, jsonPatch);
+        } catch (JsonPatchException | JsonProcessingException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
+        } catch (NoUserWithIdException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage(), e);
         }
     }

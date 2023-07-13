@@ -5,6 +5,11 @@ import com.example.accessingdatamysql.dto.DisplayUserDTO;
 import com.example.accessingdatamysql.entity.User;
 import com.example.accessingdatamysql.errorhandling.NoUserWithIdException;
 import com.example.accessingdatamysql.repository.UserRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.fge.jsonpatch.JsonPatch;
+import com.github.fge.jsonpatch.JsonPatchException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -59,5 +64,18 @@ public class UserServiceImpl implements UserService {
         return CreateUserDTO.fromEntity(updatedUser);
     }
 
+    @Override
+    public DisplayUserDTO patchUser(Integer id, JsonPatch jsonPatch) throws NoUserWithIdException, JsonPatchException, JsonProcessingException {
+        Optional<User> foundOptionalUser = userRepository.findById(id);
+        User foundUser = foundOptionalUser.orElseThrow(() -> new NoUserWithIdException("No user found with this id."));
+        User userPatched = applyPatchToUser(foundUser, jsonPatch);
+        User updatedUser = userRepository.save(userPatched);
+        return DisplayUserDTO.fromEntity(updatedUser);
+    }
 
+    private User applyPatchToUser(User user, JsonPatch jsonPatch) throws JsonPatchException, JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode patched = jsonPatch.apply(objectMapper.convertValue(user, JsonNode.class));
+        return objectMapper.treeToValue(patched, User.class);
+    }
 }

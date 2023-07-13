@@ -4,6 +4,9 @@ import com.example.accessingdatamysql.dto.CreateUserDTO;
 import com.example.accessingdatamysql.dto.DisplayUserDTO;
 import com.example.accessingdatamysql.entity.User;
 import com.example.accessingdatamysql.errorhandling.NoUserWithIdException;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.github.fge.jsonpatch.JsonPatch;
+import com.github.fge.jsonpatch.JsonPatchException;
 
 public interface UserService {
     CreateUserDTO saveUser(CreateUserDTO userDTO);
@@ -11,4 +14,5 @@ public interface UserService {
     DisplayUserDTO deleteUser(Integer id) throws NoUserWithIdException;
     DisplayUserDTO getUserById(Integer id) throws Exception;
     CreateUserDTO updateUser(Integer id, CreateUserDTO newCreateUserDTO) throws Exception;
+    DisplayUserDTO patchUser(Integer id, JsonPatch jsonPatch) throws NoUserWithIdException, JsonPatchException, JsonProcessingException;
 }
