@@ -1,9 +1,6 @@
 package com.example.accessingdatamysql.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 import static jakarta.persistence.GenerationType.IDENTITY;
 
@@ -15,6 +12,7 @@ public class User {
 
     private String name;
 
+    // @Column(name="email") by default
     private String email;
 
     private String password;
