@@ -30,10 +30,11 @@ public class UserController {
                                                     @RequestParam String password) {
         // @ResponseBody means the returned String is the response, not a view name
         // @RequestParam means it is a parameter from the GET or POST request
-        CreateUserDTO createUserDTO = new CreateUserDTO();
-        createUserDTO.setName(name);
-        createUserDTO.setEmail(email);
-        createUserDTO.setPassword(password);
+        CreateUserDTO createUserDTO = new CreateUserDTO.Builder()
+                .name(name)
+                .email(email)
+                .password(password)
+                .build();
         CreateUserDTO createUserDTOSaved = userService.saveUser(createUserDTO);
         return DisplayUserDTO.fromCreatedUserDTO(createUserDTOSaved);
     }
@@ -44,10 +45,11 @@ public class UserController {
                                                                      @PathVariable("password") String password) {
         // @ResponseBody means the returned String is the response, not a view name
         // @RequestParam means it is a parameter from the GET or POST request
-        CreateUserDTO createUserDTO = new CreateUserDTO();
-        createUserDTO.setName(name);
-        createUserDTO.setEmail(email);
-        createUserDTO.setPassword(password);
+        CreateUserDTO createUserDTO = new CreateUserDTO.Builder()
+                .name(name)
+                .email(email)
+                .password(password)
+                .build();
         CreateUserDTO createUserDTOSaved = userService.saveUser(createUserDTO);
         return DisplayUserDTO.fromCreatedUserDTO(createUserDTOSaved);
     }
