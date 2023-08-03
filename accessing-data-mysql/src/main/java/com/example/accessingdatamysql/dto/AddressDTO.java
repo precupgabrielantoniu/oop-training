@@ -3,7 +3,9 @@ package com.example.accessingdatamysql.dto;
 import com.example.accessingdatamysql.entity.Address;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class AddressDTO {
+import java.io.Serializable;
+
+public class AddressDTO implements Serializable {
     @JsonProperty("number")
     private Integer number;
 
