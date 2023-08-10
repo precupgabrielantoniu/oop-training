@@ -1,8 +1,10 @@
 package com.example.accessingdatamysql.controller;
 
+import com.example.accessingdatamysql.dto.BookDTO;
 import com.example.accessingdatamysql.dto.CreateUserDTO;
 import com.example.accessingdatamysql.dto.DisplayUserDTO;
 import com.example.accessingdatamysql.entity.User;
+import com.example.accessingdatamysql.errorhandling.NoBookWithIdException;
 import com.example.accessingdatamysql.errorhandling.NoUserWithIdException;
 import com.example.accessingdatamysql.service.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -12,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.Set;
 
 import static com.example.accessingdatamysql.dto.CreateUserDTO.fromDTO;
 
@@ -102,6 +106,15 @@ public class UserController {
             return userService.patchUser(id, jsonPatch);
         } catch (JsonPatchException | JsonProcessingException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
+        } catch (NoUserWithIdException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage(), e);
+        }
+    }
+
+    @GetMapping(path="/user/books/{user_id}")
+    public @ResponseBody Set<BookDTO> getUserBooks(@PathVariable("user_id") Integer id) {
+        try {
+            return userService.getBooks(id);
         } catch (NoUserWithIdException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage(), e);
         }

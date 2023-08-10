@@ -1,7 +1,9 @@
 package com.example.accessingdatamysql.service;
 
+import com.example.accessingdatamysql.dto.BookDTO;
 import com.example.accessingdatamysql.dto.CreateUserDTO;
 import com.example.accessingdatamysql.dto.DisplayUserDTO;
+import com.example.accessingdatamysql.entity.Book;
 import com.example.accessingdatamysql.entity.User;
 import com.example.accessingdatamysql.errorhandling.NoUserWithIdException;
 import com.example.accessingdatamysql.repository.UserRepository;
@@ -14,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -77,5 +80,12 @@ public class UserServiceImpl implements UserService {
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode patched = jsonPatch.apply(objectMapper.convertValue(user, JsonNode.class));
         return objectMapper.treeToValue(patched, User.class);
+    }
+
+    @Override
+    public Set<BookDTO> getBooks(Integer id) throws NoUserWithIdException{
+        Optional<User> foundOptionalUser = userRepository.findById(id);
+        User foundUser = foundOptionalUser.orElseThrow(() -> new NoUserWithIdException("No user found with this id."));
+        return foundUser.getBooks().stream().map(BookDTO::fromEntity).collect(Collectors.toSet());
     }
 }

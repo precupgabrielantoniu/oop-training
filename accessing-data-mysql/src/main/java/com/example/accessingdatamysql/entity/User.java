@@ -3,6 +3,8 @@ package com.example.accessingdatamysql.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.util.Set;
 
@@ -24,12 +26,12 @@ public class User {
 
     private String password;
 
-    @OneToOne(cascade=CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name="address_id", referencedColumnName = "id")
     private Address address;
 
-    @OneToMany
-    @JoinColumn(name = "owner_id")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval=true)
+    @JoinColumn(name = "owner_id", updatable = false)
     private Set<Book> books;
 
 }
