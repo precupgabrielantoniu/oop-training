@@ -34,4 +34,13 @@ public class User {
     @JoinColumn(name = "owner_id", updatable = false)
     private Set<Book> books;
 
+    @ManyToMany
+    @JoinTable(
+            name = "cart",
+            joinColumns = @JoinColumn(name = "buyer_id"),
+            inverseJoinColumns = @JoinColumn(name = "product_id"))
+    private Set<Product> products;
+
+    @OneToMany(mappedBy = "user")
+    Set<CarRental> carRentals;
 }
