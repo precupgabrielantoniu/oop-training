@@ -5,8 +5,9 @@ import com.example.accessingdatamysql.dto.ProductDTO;
 import com.example.accessingdatamysql.entity.Product;
 import com.example.accessingdatamysql.entity.User;
 import com.example.accessingdatamysql.errorhandling.NoProductWithIdException;
-import com.example.accessingdatamysql.errorhandling.NoUserWithIdException;
 import com.example.accessingdatamysql.repository.ProductRepository;
+import com.example.accessingdatamysql.transformers.DisplayUserTransformer;
+import com.example.accessingdatamysql.transformers.ProductTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,11 +21,17 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     private ProductRepository productRepository;
 
+    @Autowired
+    private DisplayUserTransformer displayUserTransformer;
+
+    @Autowired
+    private ProductTransformer productTransformer;
+
     @Override
     public ProductDTO saveProduct(ProductDTO productDTO){
-        Product product = ProductDTO.fromDTO(productDTO);
+        Product product = productTransformer.fromDTO(productDTO);
         Product savedProduct = productRepository.save(product);
-        return ProductDTO.fromEntity(savedProduct);
+        return productTransformer.fromEntity(savedProduct);
     }
 
     @Override
@@ -32,6 +39,6 @@ public class ProductServiceImpl implements ProductService {
         Optional<Product> foundOptionalProduct = productRepository.findById(productId);
         Product foundProduct = foundOptionalProduct.orElseThrow(() -> new NoProductWithIdException("No product found with this id."));
         Set<User> buyers = foundProduct.getBuyers();
-        return buyers.stream().map(DisplayUserDTO::fromEntity).collect(Collectors.toSet());
+        return buyers.stream().map(displayUserTransformer::fromEntity).collect(Collectors.toSet());
     }
 }

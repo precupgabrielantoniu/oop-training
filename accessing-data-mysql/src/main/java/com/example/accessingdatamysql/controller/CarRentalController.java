@@ -1,9 +1,8 @@
 package com.example.accessingdatamysql.controller;
 
-import com.example.accessingdatamysql.dto.CarDTO;
 import com.example.accessingdatamysql.dto.CarRentalDTO;
-import com.example.accessingdatamysql.dto.CartDTO;
-import com.example.accessingdatamysql.errorhandling.NoProductWithIdException;
+import com.example.accessingdatamysql.errorhandling.NoCarStockException;
+import com.example.accessingdatamysql.errorhandling.NoCarWithIdException;
 import com.example.accessingdatamysql.errorhandling.NoUserWithIdException;
 import com.example.accessingdatamysql.service.CarRentalService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,8 +21,10 @@ public class CarRentalController {
     public @ResponseBody CarRentalDTO addProductToUser(@PathVariable(value = "user_id") Integer userId, @PathVariable(value = "car_id") Integer carId){
         try {
             return carRentalService.saveCarRental(userId, carId);
-        } catch(Exception e){
+        } catch(NoUserWithIdException | NoCarWithIdException e){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage(), e);
+        } catch(NoCarStockException e){
+            throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE, e.getMessage(), e);
         }
     }
 }

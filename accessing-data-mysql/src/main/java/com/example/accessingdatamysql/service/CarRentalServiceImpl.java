@@ -5,11 +5,13 @@ import com.example.accessingdatamysql.entity.Car;
 import com.example.accessingdatamysql.entity.CarRental;
 import com.example.accessingdatamysql.entity.CarRentalKey;
 import com.example.accessingdatamysql.entity.User;
+import com.example.accessingdatamysql.errorhandling.NoCarStockException;
 import com.example.accessingdatamysql.errorhandling.NoCarWithIdException;
 import com.example.accessingdatamysql.errorhandling.NoUserWithIdException;
 import com.example.accessingdatamysql.repository.CarRentalRepository;
 import com.example.accessingdatamysql.repository.CarRepository;
 import com.example.accessingdatamysql.repository.UserRepository;
+import com.example.accessingdatamysql.transformers.CarRentalTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,22 +23,25 @@ import java.util.Optional;
 public class CarRentalServiceImpl implements CarRentalService {
 
     @Autowired
-    CarRentalRepository carRentalRepository;
+    private CarRentalRepository carRentalRepository;
 
     @Autowired
-    CarRepository carRepository;
+    private CarRepository carRepository;
 
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
+
+    @Autowired
+    private CarRentalTransformer carRentalTransformer;
 
     @Override
-    public CarRentalDTO saveCarRental(Integer userId, Integer carId) throws Exception {
+    public CarRentalDTO saveCarRental(Integer userId, Integer carId) throws NoCarStockException, NoCarWithIdException, NoUserWithIdException {
         Optional<Car> optionalCar = carRepository.findById(carId);
         Optional<User> optionalUser = userRepository.findById(userId);
         Car foundCar = optionalCar.orElseThrow(() -> new NoCarWithIdException("No car found with this id."));
         User foundUser = optionalUser.orElseThrow(() -> new NoUserWithIdException("No user found with this id."));
         if (foundCar.getStock() == 0){
-            throw new Exception("Not enough cars in stock.");
+            throw new NoCarStockException("Not enough cars in stock.");
         }
         foundCar.setStock((foundCar.getStock()) - 1);
         CarRental carRental = new CarRental();
@@ -53,6 +58,6 @@ public class CarRentalServiceImpl implements CarRentalService {
         userRepository.save(foundUser);
         carRepository.save(foundCar);
 
-        return CarRentalDTO.fromEntity(carRentalFinal);
+        return carRentalTransformer.fromEntity(carRentalFinal);
     }
 }

@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 
 @SpringBootApplication(scanBasePackages = "com.example.accessingdatamysql")
 @EnableJpaRepositories("com.example.accessingdatamysql.repository")
-@ComponentScan(basePackages= {"com.example.accessingdatamysql.controller", "com.example.accessingdatamysql.service"})
+@ComponentScan(basePackages= {"com.example.accessingdatamysql.controller", "com.example.accessingdatamysql.service", "com.example.accessingdatamysql.transformers"})
 @EntityScan("com.example.accessingdatamysql.entity")
 @CrossOrigin(origins = "*",  allowedHeaders = "*")
 public class AccessingDataMysqlApplication {
