@@ -9,11 +9,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.github.fge.jsonpatch.JsonPatch;
 import com.github.fge.jsonpatch.JsonPatchException;
 
+import javax.naming.directory.InvalidAttributesException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.Set;
 
 
 public interface UserService {
-    CreateUserDTO saveUser(CreateUserDTO userDTO);
+    CreateUserDTO saveUser(CreateUserDTO userDTO) throws InvalidAttributesException, SQLIntegrityConstraintViolationException;
     Iterable<DisplayUserDTO> findAllUsers();
     DisplayUserDTO deleteUser(Integer id) throws NoUserWithIdException;
     DisplayUserDTO getUserById(Integer id) throws Exception;

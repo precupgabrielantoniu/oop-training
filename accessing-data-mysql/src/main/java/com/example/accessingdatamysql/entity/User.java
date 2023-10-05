@@ -3,8 +3,6 @@ package com.example.accessingdatamysql.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
 import java.util.Set;
 
@@ -13,12 +11,14 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 @Entity // This tells Hibernate to make a table out of this class
 @Getter
 @Setter
-@Table(name="user")
+//@Table(name="user") works if all the constraints are specified before creating the table.
+@Table(name = "user", uniqueConstraints={@UniqueConstraint(columnNames={"name"})})
 public class User {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Integer id;
 
+    //@Column(unique = true) would work if the constraint would've been created at the same time as the table.
     private String name;
 
     // @Column(name="email") by default

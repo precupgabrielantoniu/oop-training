@@ -1,9 +1,6 @@
 package com.example.accessingdatamysql.service;
 
-import com.example.accessingdatamysql.dto.BookDTO;
-import com.example.accessingdatamysql.dto.CreateUserDTO;
-import com.example.accessingdatamysql.dto.DisplayUserDTO;
-import com.example.accessingdatamysql.dto.ProductDTO;
+import com.example.accessingdatamysql.dto.*;
 import com.example.accessingdatamysql.entity.User;
 import com.example.accessingdatamysql.errorhandling.NoUserWithIdException;
 import com.example.accessingdatamysql.repository.UserRepository;
@@ -16,9 +13,15 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.fge.jsonpatch.JsonPatch;
 import com.github.fge.jsonpatch.JsonPatchException;
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import javax.naming.directory.InvalidAttributesException;
+import java.sql.SQLIntegrityConstraintViolationException;
+import java.time.Instant;
+import java.util.Date;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -26,9 +29,13 @@ import java.util.stream.StreamSupport;
 
 @Service
 public class UserServiceImpl implements UserService {
+    private static final String LOG_MESSAGE = "User with name %s saved successfully";
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private LogService logService;
 
     @Autowired
     private DisplayUserTransformer displayUserTransformer;
@@ -43,14 +50,25 @@ public class UserServiceImpl implements UserService {
     private ProductTransformer productTransformer;
 
     @Override
-    public CreateUserDTO saveUser(CreateUserDTO userDTO){
+    @Transactional(rollbackFor = {InvalidAttributesException.class, SQLIntegrityConstraintViolationException.class}, noRollbackFor = ConstraintViolationException.class )
+    public CreateUserDTO saveUser(CreateUserDTO userDTO) throws InvalidAttributesException, SQLIntegrityConstraintViolationException {
         User user = createUserTransformer.fromDTO(userDTO);
+        LogDTO logDTO = new LogDTO();
+        logDTO.setDate(Date.from(Instant.now()));
+        logDTO.setMessage(String.format(LOG_MESSAGE, user.getName()));
+        logService.saveLog(logDTO);
+        if(!user.getName().matches("[a-zA-Z]+"))
+            throw new SQLIntegrityConstraintViolationException(); // Checked Exception
         User savedUser = userRepository.save(user);
+        if (!user.getEmail().contains("@"))
+            throw new InvalidAttributesException(); // Checked Exception
+        if (user.getPassword().length() < 8)
+            throw new ConstraintViolationException("Invalid password length", null, "Password length"); // Unchecked Exception
         return createUserTransformer.fromEntity(savedUser);
     }
 
     @Override
-    public Iterable<DisplayUserDTO> findAllUsers(){
+    public Iterable<DisplayUserDTO> findAllUsers() {
         return StreamSupport.stream(userRepository.findAll().spliterator(), false)
                 .map(displayUserTransformer::fromEntity)
                 .collect(Collectors.toList());
@@ -99,7 +117,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Set<BookDTO> getBooks(Integer id) throws NoUserWithIdException{
+    public Set<BookDTO> getBooks(Integer id) throws NoUserWithIdException {
         Optional<User> foundOptionalUser = userRepository.findById(id);
         User foundUser = foundOptionalUser.orElseThrow(() -> new NoUserWithIdException("No user found with this id."));
         return foundUser.getBooks().stream().map(bookTransformer::fromEntity).collect(Collectors.toSet());
