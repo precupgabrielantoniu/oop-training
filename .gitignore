@@ -26,3 +26,19 @@
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 replay_pid*
+
+### react ###
+.DS_*
+*.log
+logs
+**/*.backup.*
+**/*.back.*
+
+frontend-app-demo/node_modules
+frontend-app-demo/bower_components
+
+*.sublime*
+
+psd
+thumb
+sketch
