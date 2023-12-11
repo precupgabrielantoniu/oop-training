@@ -96,7 +96,9 @@ public class UserServiceImpl implements UserService {
         User foundUser = foundOptionalUser.orElseThrow(() -> new NoUserWithIdException("No user found with this id."));
         foundUser.setName(newCreateUsedDTO.getName());
         foundUser.setEmail(newCreateUsedDTO.getEmail());
-        foundUser.setPassword(newCreateUsedDTO.getPassword());
+        if(newCreateUsedDTO.getPassword() != null && !newCreateUsedDTO.getPassword().equals("")) {
+            foundUser.setPassword(newCreateUsedDTO.getPassword());
+        }
         User updatedUser = userRepository.save(foundUser);
         return createUserTransformer.fromEntity(updatedUser);
     }

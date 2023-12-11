@@ -13,6 +13,7 @@ public class CreateUserTransformer implements Transformer<User, CreateUserDTO> {
 
     public CreateUserDTO fromEntity(User user){
         CreateUserDTO userDTO = new CreateUserDTO();
+        userDTO.setId(user.getId());
         userDTO.setName(user.getName());
         userDTO.setEmail(user.getEmail());
         userDTO.setPassword(user.getPassword());

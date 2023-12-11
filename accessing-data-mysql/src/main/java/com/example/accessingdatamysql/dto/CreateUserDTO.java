@@ -10,6 +10,9 @@ import java.io.Serializable;
 @Setter
 public class CreateUserDTO implements Serializable { //Data transfer object
 
+    @JsonProperty("id")
+    private Integer id;
+
     @JsonProperty("name")
     private String name;
 
@@ -24,6 +27,8 @@ public class CreateUserDTO implements Serializable { //Data transfer object
 
     public static class Builder {
 
+        private Integer id;
+
         private String name;
 
         private String email;
@@ -31,6 +36,11 @@ public class CreateUserDTO implements Serializable { //Data transfer object
         private String password;
 
         private AddressDTO addressDTO;
+
+        public Builder id(Integer id){
+            this.id = id;
+            return this;
+        }
 
         public Builder name(String name){
             this.name = name;
@@ -54,6 +64,7 @@ public class CreateUserDTO implements Serializable { //Data transfer object
 
         public CreateUserDTO build(){
             CreateUserDTO createUserDTO = new CreateUserDTO();
+            createUserDTO.id = id;
             createUserDTO.name = name;
             createUserDTO.email = email;
             createUserDTO.password = password;

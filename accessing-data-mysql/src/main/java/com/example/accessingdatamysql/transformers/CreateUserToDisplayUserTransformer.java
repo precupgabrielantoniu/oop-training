@@ -9,6 +9,7 @@ public class CreateUserToDisplayUserTransformer implements DTOTransformer<Create
 
     public DisplayUserDTO transform(CreateUserDTO createUserDTO){
         DisplayUserDTO displayUserDTO = new DisplayUserDTO();
+        displayUserDTO.setId(createUserDTO.getId());
         displayUserDTO.setName(createUserDTO.getName());
         displayUserDTO.setEmail(createUserDTO.getEmail());
         displayUserDTO.setAddressDTO(createUserDTO.getAddressDTO());

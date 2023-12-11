@@ -12,10 +12,13 @@ import com.github.fge.jsonpatch.JsonPatch;
 import com.github.fge.jsonpatch.JsonPatchException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.naming.directory.InvalidAttributesException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.Set;
 
@@ -67,20 +70,22 @@ public class UserController {
             CreateUserDTO createUserDTOSaved = userService.saveUser(createUserDTO);
             return createUserToDisplayUserTransformer.transform(createUserDTOSaved);
 
-        } catch (InvalidAttributesException|SQLIntegrityConstraintViolationException e) {
+        } catch (InvalidAttributesException | SQLIntegrityConstraintViolationException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage(), e);
         }
     }
 
     @PostMapping(path = "/add/request-body")
-    public @ResponseBody DisplayUserDTO addNewUserWithRequestBody(@RequestBody CreateUserDTO createUserDTO) {
-        try{
-        CreateUserDTO createUserDTOSaved = userService.saveUser(createUserDTO);
-            return createUserToDisplayUserTransformer.transform(createUserDTOSaved);
-
-    } catch (InvalidAttributesException|SQLIntegrityConstraintViolationException e) {
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage(), e);
-    }
+    public ResponseEntity<DisplayUserDTO> addNewUserWithRequestBody(@RequestBody CreateUserDTO createUserDTO) {
+        try {
+            CreateUserDTO createUserDTOSaved = userService.saveUser(createUserDTO);
+            DisplayUserDTO displayUserDTO = createUserToDisplayUserTransformer.transform(createUserDTOSaved);
+            //return createUserToDisplayUserTransformer.transform(createUserDTOSaved);
+            return ResponseEntity.created(new URI("/users/" + createUserDTOSaved.getId())).body(displayUserDTO);
+        } catch (InvalidAttributesException | SQLIntegrityConstraintViolationException | URISyntaxException e) {
+            return ResponseEntity.notFound().build();
+            //throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage(), e);
+        }
     }
 
     @GetMapping(path = "/all")
