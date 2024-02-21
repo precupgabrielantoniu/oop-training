@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 public class AddressTransformer implements Transformer<Address, AddressDTO> {
     public AddressDTO fromEntity(Address address){
         AddressDTO addressDTO = new AddressDTO();
+        addressDTO.setId(address.getId());
         addressDTO.setNumber(address.getNumber());
         addressDTO.setStreet(address.getStreet());
         addressDTO.setCity(address.getCity());
@@ -17,6 +18,7 @@ public class AddressTransformer implements Transformer<Address, AddressDTO> {
 
     public Address fromDTO(AddressDTO addressDTO){
         return Address.builder()
+                .id(addressDTO.getId())
                 .number(addressDTO.getNumber())
                 .street(addressDTO.getStreet())
                 .city(addressDTO.getCity())

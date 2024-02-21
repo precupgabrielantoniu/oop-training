@@ -9,6 +9,9 @@ import java.io.Serializable;
 @Setter
 @Getter
 public class AddressDTO implements Serializable {
+    @JsonProperty("id")
+    private Integer id;
+
     @JsonProperty("number")
     private Integer number;
 
