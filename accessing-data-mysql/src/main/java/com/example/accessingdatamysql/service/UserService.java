@@ -1,7 +1,7 @@
 package com.example.accessingdatamysql.service;
 
-import com.example.accessingdatamysql.dto.BookDTO;
 import com.example.accessingdatamysql.dto.CreateUserDTO;
+import com.example.accessingdatamysql.dto.DisplayBookDTO;
 import com.example.accessingdatamysql.dto.DisplayUserDTO;
 import com.example.accessingdatamysql.dto.ProductDTO;
 import com.example.accessingdatamysql.errorhandling.NoUserWithIdException;
@@ -21,7 +21,7 @@ public interface UserService {
     DisplayUserDTO getUserById(Integer id) throws Exception;
     CreateUserDTO updateUser(Integer id, CreateUserDTO newCreateUserDTO) throws Exception;
     DisplayUserDTO patchUser(Integer id, JsonPatch jsonPatch) throws NoUserWithIdException, JsonPatchException, JsonProcessingException;
-    Set<BookDTO> getBooks(Integer id) throws NoUserWithIdException;
+    Set<DisplayBookDTO> getBooks(Integer id) throws NoUserWithIdException;
     Set<ProductDTO> getProducts(Integer userId) throws NoUserWithIdException;
 
 }

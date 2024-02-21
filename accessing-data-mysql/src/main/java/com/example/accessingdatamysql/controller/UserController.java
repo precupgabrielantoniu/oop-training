@@ -1,9 +1,6 @@
 package com.example.accessingdatamysql.controller;
 
-import com.example.accessingdatamysql.dto.BookDTO;
-import com.example.accessingdatamysql.dto.CreateUserDTO;
-import com.example.accessingdatamysql.dto.DisplayUserDTO;
-import com.example.accessingdatamysql.dto.ProductDTO;
+import com.example.accessingdatamysql.dto.*;
 import com.example.accessingdatamysql.errorhandling.NoUserWithIdException;
 import com.example.accessingdatamysql.service.UserService;
 import com.example.accessingdatamysql.transformers.CreateUserToDisplayUserTransformer;
@@ -136,7 +133,7 @@ public class UserController {
     }
 
     @GetMapping(path = "/user/books/{user_id}")
-    public @ResponseBody Set<BookDTO> getUserBooks(@PathVariable("user_id") Integer id) {
+    public @ResponseBody Set<DisplayBookDTO> getUserBooks(@PathVariable("user_id") Integer id) {
         try {
             return userService.getBooks(id);
         } catch (NoUserWithIdException e) {

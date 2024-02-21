@@ -1,6 +1,7 @@
 package com.example.accessingdatamysql.controller;
 
-import com.example.accessingdatamysql.dto.BookDTO;
+import com.example.accessingdatamysql.dto.CreateBookDTO;
+import com.example.accessingdatamysql.dto.DisplayBookDTO;
 import com.example.accessingdatamysql.errorhandling.NoBookWithIdException;
 import com.example.accessingdatamysql.errorhandling.NoUserWithIdException;
 import com.example.accessingdatamysql.service.BookService;
@@ -17,16 +18,16 @@ public class BookController {
     BookService bookService;
 
     @PostMapping(path="/add/request-body/{owner_id}")
-    public @ResponseBody BookDTO addNewBookWithRequestBody(@PathVariable(value = "owner_id") Integer ownerId, @RequestBody BookDTO bookDTO) {
+    public @ResponseBody DisplayBookDTO addNewBookWithRequestBody(@PathVariable(value = "owner_id") Integer ownerId, @RequestBody CreateBookDTO createBookDTO) {
         try {
-            return bookService.saveBook(bookDTO, ownerId);
+            return bookService.saveBook(createBookDTO, ownerId);
         } catch (NoUserWithIdException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage(), e);
         }
     }
 
     @DeleteMapping(path="/delete/{book_id}")
-    public @ResponseBody BookDTO deleteBook(@PathVariable(value = "book_id") Integer bookId) {
+    public @ResponseBody DisplayBookDTO deleteBook(@PathVariable(value = "book_id") Integer bookId) {
         try {
             return bookService.deleteBook(bookId);
         } catch (NoBookWithIdException e) {

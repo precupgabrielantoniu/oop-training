@@ -1,14 +1,14 @@
 package com.example.accessingdatamysql.dto;
 
-import com.example.accessingdatamysql.entity.User;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
+
 @Getter
 @Setter
-public class BookDTO implements Serializable {
+public class DisplayBookDTO implements Serializable {
     @JsonProperty("title")
     private String title;
 
@@ -18,5 +18,7 @@ public class BookDTO implements Serializable {
     @JsonProperty("page_count")
     private Integer pageCount;
 
-    private User owner;
+    @JsonProperty("owner_name")
+    private String ownerName;
+
 }

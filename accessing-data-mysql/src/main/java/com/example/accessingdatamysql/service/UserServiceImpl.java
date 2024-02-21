@@ -4,10 +4,7 @@ import com.example.accessingdatamysql.dto.*;
 import com.example.accessingdatamysql.entity.User;
 import com.example.accessingdatamysql.errorhandling.NoUserWithIdException;
 import com.example.accessingdatamysql.repository.UserRepository;
-import com.example.accessingdatamysql.transformers.BookTransformer;
-import com.example.accessingdatamysql.transformers.CreateUserTransformer;
-import com.example.accessingdatamysql.transformers.DisplayUserTransformer;
-import com.example.accessingdatamysql.transformers.ProductTransformer;
+import com.example.accessingdatamysql.transformers.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -38,16 +35,21 @@ public class UserServiceImpl implements UserService {
     private LogService logService;
 
     @Autowired
+    private DisplayBookTransformer displayBookTransformer;
+
+    @Autowired
     private DisplayUserTransformer displayUserTransformer;
 
     @Autowired
-    private BookTransformer bookTransformer;
+    private CreateBookTransformer createBookTransformer;
 
     @Autowired
     private CreateUserTransformer createUserTransformer;
 
     @Autowired
     private ProductTransformer productTransformer;
+
+
 
     @Override
     @Transactional(rollbackFor = {InvalidAttributesException.class, SQLIntegrityConstraintViolationException.class}, noRollbackFor = ConstraintViolationException.class )
@@ -119,10 +121,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Set<BookDTO> getBooks(Integer id) throws NoUserWithIdException {
+    public Set<DisplayBookDTO> getBooks(Integer id) throws NoUserWithIdException {
         Optional<User> foundOptionalUser = userRepository.findById(id);
         User foundUser = foundOptionalUser.orElseThrow(() -> new NoUserWithIdException("No user found with this id."));
-        return foundUser.getBooks().stream().map(bookTransformer::fromEntity).collect(Collectors.toSet());
+        return foundUser.getBooks().stream().map(displayBookTransformer::fromEntity).collect(Collectors.toSet());
     }
 
     @Override
