@@ -37,7 +37,7 @@ class UserList extends Component {
 
         const userList = users.map(user => {
             return <tr key={user.id}>
-                <td style={{whiteSpace: 'nowrap'}}>{user.name}</td>
+                <td className={"name-color"} style={{whiteSpace: 'nowrap'}}>{user.name}</td>
                 <td>{user.email}</td>
                 <td>
                     <ButtonGroup>
