@@ -1,8 +1,7 @@
 package com.example.accessingdatamysql.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.Set;
 
@@ -12,6 +11,9 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 @Getter
 @Setter
 //@Table(name="user") works if all the constraints are specified before creating the table.
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "user", uniqueConstraints={@UniqueConstraint(columnNames={"name"})})
 public class User {
     @Id

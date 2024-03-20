@@ -17,10 +17,14 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 @Service
 public class ProductServiceImpl implements ProductService {
+
+    private final Logger logger = Logger.getLogger(ProductServiceImpl.class.getName());
 
     @Autowired
     private ProductRepository productRepository;
@@ -34,14 +38,21 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductDTO saveProduct(ProductDTO productDTO) {
         Product product = productTransformer.fromDTO(productDTO);
-        Product savedProduct = productRepository.save(product);
-        return productTransformer.fromEntity(savedProduct);
+        try {
+            Product savedProduct = productRepository.save(product);
+            ProductDTO productDTOSaved = productTransformer.fromEntity(savedProduct);
+            logger.log(Level.INFO, "The product with id " + product.getId() + " has been saved.");
+            return productDTOSaved;
+        } catch(RuntimeException re){
+            System.out.println("Connection interrupted.");
+            return null;
+        }
     }
 
     @Override
     public Set<DisplayUserDTO> getBuyers(Integer productId) throws NoProductWithIdException {
         Optional<Product> foundOptionalProduct = productRepository.findById(productId);
-        Product foundProduct = foundOptionalProduct.orElseThrow(() -> new NoProductWithIdException("No product found with this id."));
+        Product foundProduct = foundOptionalProduct.orElseThrow(() -> new NoProductWithIdException("No product found with id " + productId));
         Set<User> buyers = foundProduct.getBuyers();
         return buyers.stream().map(displayUserTransformer::fromEntity).collect(Collectors.toSet());
     }
