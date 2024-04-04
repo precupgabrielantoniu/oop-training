@@ -97,7 +97,9 @@ public class UserServiceImpl implements UserService {
         //Check notNull annotation from Spring/lombok
         Optional<User> foundOptionalUser = userRepository.findById(id);
         User foundUser = foundOptionalUser.orElseThrow(() -> new NoUserWithIdException("No user found with this id."));
-        foundUser.setName(newCreatedUserDTO.getName());
+        if(newCreatedUserDTO.getName() != null && !newCreatedUserDTO.getName().equals("") && !newCreatedUserDTO.getName().matches(".*\\d+.*")){
+            foundUser.setName(newCreatedUserDTO.getName());
+        }
         foundUser.setEmail(newCreatedUserDTO.getEmail());
         foundUser.setAddress(addressTransformer.fromDTO(newCreatedUserDTO.getAddressDTO()));
         if(newCreatedUserDTO.getPassword() != null && !newCreatedUserDTO.getPassword().equals("")) {
